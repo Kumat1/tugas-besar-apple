@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 public class TicTacToe extends JFrame {
     private BoxLayout layoutMain;
@@ -14,11 +15,14 @@ public class TicTacToe extends JFrame {
     private JMenu file;
     private JMenuItem themes,close;
     private GridBagConstraints constraints;
-    private JLabel panjang,lebar,blok,pemain1,pemain2;
-    private JComboBox fieldPanjang,fieldLebar,fieldBlok,fieldPemain1,fieldPemain2;
+    private JLabel panjang,lebar,blok,pemain;
+    private JComboBox fieldPanjang,fieldLebar,fieldBlok,fieldPemain;
     private String pilihan[]={"3","4","5","6","7","8","9","10"};
-    private String pilihan1[]={"X","O"};
+    private String pilihan1[]={"Player 1 : X , Player 2 : O","Player 1 : O , Player 2 : X"};
+    private String pemain1,pemain2;
+    private Integer index;
     private JButton buttonOk;
+    private int selectedPanjang,selectedLebar,selectedBlok;
 
     public TicTacToe()
     {
@@ -34,12 +38,38 @@ public class TicTacToe extends JFrame {
             e.printStackTrace();
         }
 
+        ActionListener actionButton = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectedPanjang = Integer.valueOf(String.valueOf(fieldPanjang.getSelectedItem()));
+
+                selectedLebar = Integer.valueOf(String.valueOf(fieldLebar.getSelectedItem()));
+
+                selectedBlok = Integer.valueOf(String.valueOf(fieldBlok.getSelectedItem()));
+
+                int selectedIndex = fieldPemain.getSelectedIndex();
+
+                if(selectedIndex == 0) {
+                    pemain1 = "X";
+                    pemain2 = "O";
+                }
+                else if(selectedIndex == 1){
+                    pemain1 = "O";
+                    pemain2 = "X";
+                }
+
+                ArenaGame arenaGame = new ArenaGame(selectedPanjang, selectedLebar,selectedBlok,pemain1,pemain2);
+                TicTacToe.this.setVisible(false);
+            }
+        };
+
         font = new Font("Consolas", Font.PLAIN ,15);
 
         //panelMain
         panelMain = (JPanel) this.getContentPane();
         layoutMain = new BoxLayout(panelMain, BoxLayout.Y_AXIS);
         panelMain.setLayout(layoutMain);
+
 
         //menubar
         menuBar = new JMenuBar();
@@ -49,7 +79,8 @@ public class TicTacToe extends JFrame {
         themes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                JFileChooser file = new JFileChooser();
+                File background = file.getSelectedFile();
             }
         });
 
@@ -66,7 +97,7 @@ public class TicTacToe extends JFrame {
 
         menuBar.add(file);
 
-        this.setJMenuBar(menuBar);
+        setJMenuBar(menuBar);
 
         //panel Input
         panelInput = new JPanel();
@@ -94,9 +125,8 @@ public class TicTacToe extends JFrame {
         constraints.gridy=1;
         constraints.gridx=2;
 
-
         fieldPanjang = new JComboBox(pilihan);
-        fieldPanjang.setPreferredSize(new Dimension(200,20));
+        fieldPanjang.setPreferredSize(new Dimension(250,20));
         fieldPanjang.setFont(font);
         panelInput.add(fieldPanjang,constraints);
 
@@ -116,7 +146,7 @@ public class TicTacToe extends JFrame {
         constraints.gridx=2;
 
         fieldLebar = new JComboBox(pilihan);
-        fieldLebar.setPreferredSize(new Dimension(200,20));
+        fieldLebar.setPreferredSize(new Dimension(250,20));
         fieldLebar.setFont(font);
         panelInput.add(fieldLebar,constraints);
 
@@ -136,7 +166,7 @@ public class TicTacToe extends JFrame {
         constraints.gridx=2;
 
         fieldBlok = new JComboBox(pilihan);
-        fieldBlok.setPreferredSize(new Dimension(200,20));
+        fieldBlok.setPreferredSize(new Dimension(250,20));
         fieldBlok.setFont(font);
         panelInput.add(fieldBlok,constraints);
 
@@ -145,56 +175,39 @@ public class TicTacToe extends JFrame {
         constraints.gridy=4;
         constraints.gridx=0;
 
-        pemain1 = new JLabel("Pemain 1:");
-        pemain1.setPreferredSize(new Dimension(180,20));
-        pemain1.setFont(font);
-        panelInput.add(pemain1,constraints);
+        pemain = new JLabel("Pemain :");
+        pemain.setPreferredSize(new Dimension(180,20));
+        pemain.setFont(font);
+        panelInput.add(pemain,constraints);
 
         constraints.gridwidth = 2;
         constraints.gridheight =1;
         constraints.gridy=4;
         constraints.gridx=2;
 
-        fieldPemain1 = new JComboBox(pilihan1);
-        fieldPemain1.setPreferredSize(new Dimension(200,20));
-        fieldPemain1.setFont(font);
-        panelInput.add(fieldPemain1,constraints);
+        fieldPemain = new JComboBox(pilihan1);
+        fieldPemain.setPreferredSize(new Dimension(250,20));
+        fieldPemain.setFont(font);
+        panelInput.add(fieldPemain,constraints);
 
-        constraints.gridwidth = 1;
-        constraints.gridheight =1;
-        constraints.gridy=5;
-        constraints.gridx=0;
-
-        pemain2 = new JLabel("Pemain 2:");
-        pemain2.setPreferredSize(new Dimension(180,20));
-        pemain2.setFont(font);
-        panelInput.add(pemain2,constraints);
-
-        constraints.gridwidth = 2;
-        constraints.gridheight =1;
-        constraints.gridy=5;
-        constraints.gridx=2;
-
-        fieldPemain2 = new JComboBox(pilihan1);
-        fieldPemain2.setPreferredSize(new Dimension(200,20));
-        fieldPemain2.setFont(font);
-        panelInput.add(fieldPemain2,constraints);
 
         constraints.gridwidth = 1;
         constraints.gridheight =1;
         constraints.gridy=7;
         constraints.gridx=3;
 
-        buttonOk = new JButton("Ok");
+        buttonOk = new JButton("Play");
         buttonOk.setPreferredSize(new Dimension(80,25));
         buttonOk.setFont(font);
+        buttonOk.addActionListener(actionButton);
         panelInput.add(buttonOk,constraints);
+
 
         panelInput.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
         panelMain.add(panelInput);
 
         this.setTitle("Tic Tac Toe");
-        this.setSize(450,250);
+        this.setSize(500,250);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

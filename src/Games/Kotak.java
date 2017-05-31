@@ -9,16 +9,19 @@ public class Kotak extends JLabel {
     public Kotak(){
         this.symbol = "";
 
+        Font font = new Font("Arial",Font.BOLD,50);
         this.setOpaque(true);
         this.setBackground(Color.BLUE);
         this.setBorder(BorderFactory.createLineBorder(Color.black,1));
+        this.setFont(font);
+        this.setHorizontalAlignment(CENTER);
     }
 
     public String getSymbol() {
         return symbol;
     }
 
-    private void setSymbol(String symbol) {
+    public void setSymbol(String symbol) {
         this.symbol = symbol;
 
         this.setText(symbol);

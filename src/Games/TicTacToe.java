@@ -19,7 +19,9 @@ public class TicTacToe extends JFrame {
     private JComboBox fieldPanjang,fieldLebar,fieldBlok,fieldPemain;
     private String pilihan[]={"3","4","5","6","7","8","9","10"};
     private String pilihan1[]={"Player 1 : X , Player 2 : O","Player 1 : O , Player 2 : X"};
-    private String pemain1,pemain2;
+    private String pemain1,pemain2,path;
+    private JFileChooser fileChoose;
+    private File selectedFile;
     private Integer index;
     private JButton buttonOk;
     private int selectedPanjang,selectedLebar,selectedBlok;
@@ -37,6 +39,7 @@ public class TicTacToe extends JFrame {
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }
+
 
         ActionListener actionButton = new ActionListener() {
             @Override
@@ -58,7 +61,7 @@ public class TicTacToe extends JFrame {
                     pemain2 = "X";
                 }
 
-                ArenaGame arenaGame = new ArenaGame(selectedPanjang, selectedLebar,selectedBlok,pemain1,pemain2);
+                ArenaGame arenaGame = new ArenaGame(selectedPanjang, selectedLebar,selectedBlok,pemain1,pemain2,path);
                 TicTacToe.this.setVisible(false);
             }
         };
@@ -75,12 +78,35 @@ public class TicTacToe extends JFrame {
         menuBar = new JMenuBar();
         file = new JMenu("File");
 
-        themes = new JMenuItem("Change Themes");
+        themes = new JMenuItem("Change Background");
         themes.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser file = new JFileChooser();
-                File background = file.getSelectedFile();
+
+                fileChoose = new JFileChooser();
+                fileChoose.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+                fileChoose.showDialog(null,"Open");
+
+                selectedFile = fileChoose.getSelectedFile();
+
+                if (selectedFile == null) {return;}
+
+                String ext = "";
+                String fileName = selectedFile.getName();
+
+                int i = fileName.lastIndexOf(".");
+                if(i > 0 &&  i < fileName.length() - 1){
+                    ext = (fileName.substring(i+1)).toLowerCase();
+                }
+
+                if(ext.equals("jpg") || ext.equals("png") || ext .equals("jpeg") || ext.equals("gif")){
+                    path= selectedFile.getAbsolutePath();
+                }
+                else {
+                    JOptionPane.showMessageDialog(TicTacToe.this,"File harus berupa foto");
+                    return;
+                }
+
             }
         });
 
@@ -211,10 +237,7 @@ public class TicTacToe extends JFrame {
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
     }
 
-
-    public static void main(String[] args) {
-      new TicTacToe();
-    }
 }
